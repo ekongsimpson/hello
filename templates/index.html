@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML</title>
+</head>
+<body>    
+    <nav>        
+        <a href="{{ url_for('index') }}">Home</a>       
+    </nav>
+
+    <h1>{{ data.word }}</h1>
+    
+    <ul>
+        {% for definition in data.definition %}
+        <li>{{ definition }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('api_v1', word=data.word, definition=data.definition) }}">Word definition</a>
+</html>

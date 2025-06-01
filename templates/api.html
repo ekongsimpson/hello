@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Response</title>
+</head>
+<body>
+    <h1>API Response</h1>
+    <p><strong>Word:</strong> {{ url_for('api_v1', word=data.word, definition=data.definition) }}</p>
+    <br>
+    <br>
+    <pre>{{ data | tojson(indent=2) }}</pre>
+    <br>
+    <br>
+    <a href="{{ url_for('index') }}">Back to Home</a>
+</body>
+</html>
