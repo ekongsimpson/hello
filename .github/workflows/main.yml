@@ -24,4 +24,4 @@ jobs:
                                  --resource-group ${{ vars.AKS_RESOURCE_GROUP }} \
                                  --overwrite-existing
       - name: Deploy to AKS
-        run: kubectl apply -f ./k8s-multicloud/aks/aks.yaml
+        run: kubectl apply -f ./k8s-multicloud/azure/aks.yaml
