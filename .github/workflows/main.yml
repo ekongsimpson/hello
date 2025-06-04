@@ -21,7 +21,7 @@ jobs:
       - name: Get AKS Credentials
         run: |
           az aks get-credentials --name ${{ secrets.AZURE_CREDENTIALS }} \
-                                 --resource-group AKS_RESOURCE_GROUP \
+                                 --resource-group "rg-aks" \
                                  --subscription ${{ secrets.SUBSCRIPTION_ID }} \
                                  --overwrite-existing
       - name: Deploy to AKS
