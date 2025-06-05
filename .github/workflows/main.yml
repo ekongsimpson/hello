@@ -1,0 +1,73 @@
+
+name: Multi-Cloud K8s Deployment
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-aks:
+    name: Deploy to AKS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get AKS Credentials
+        run: |
+          az aks get-credentials --name ${{ vars.AKS_CLUSTER_NAME }} \
+                                 --resource-group ${{ vars.AKS_RESOURCE_GROUP }} \
+                                 --overwrite-existing
+      - name: Deploy to AKS
+        run: kubectl apply -f ./k8s-multicloud/azure/aks.yaml
+        
+  deploy-eks:
+    name: Deploy to EKS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name ${{ vars.EKS_CLUSTER_NAME }}
+
+      - name: Deploy to EKS
+        run: kubectl apply -f ./k8s-multicloud/aws/aws.yaml
+
+  deploy-gke:
+    name: Deploy to GKE
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Install gke-gcloud-auth-plugin
+        run: |
+          gcloud components install gke-gcloud-auth-plugin
+
+      - name: Get GKE Credentials
+        run: |
+          gcloud container clusters get-credentials gke-cluster \
+            --region ${{ vars.GCP_REGION }} \
+            --project ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Deploy to GKE
+        run: kubectl apply -f ./k8s-multicloud/gcp/gke.yaml
