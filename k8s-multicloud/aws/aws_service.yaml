@@ -1,0 +1,13 @@
+# k8s-myapp-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+spec:
+  selector:
+    app: myapp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000  # Replace with your container port
+  type: LoadBalancer
